@@ -1,0 +1,218 @@
+<html>
+    <head>
+        <title> To do App </title> 
+        <link rel="stylesheet" href="css/style.css">
+        <!-- <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css"> -->
+
+<script src = "js/jquery.js" ></script>
+<script src = "js/jquery.min.js" ></script>
+        
+                
+    </head>
+    <body></body>
+    <div class = "text_box">
+
+
+
+   <!--  <form id="taskEntryForm"> -->
+        <input type = "text" autofocus> 
+    <!-- </form> -->
+    </div>
+    <ul>
+        <!-- <li> here <input type = "button"; value = "Delete";   > </li> -->
+
+    </ul>
+
+    <center>
+    <button id="all_todos_show">All</button>
+    <button id="completed">Completed</button>
+    <button id="uncompleted">Uncompleted</button>
+    </center>
+
+</html>
+
+<script>
+
+    $(document).ready(function(){
+               // display todos 
+
+
+        function getTodos(){            
+            
+            let all_todos = [];
+
+            for (var i = 0; i < localStorage.length; i++){
+                todo_from_localStorage = localStorage.getItem(localStorage.key(i));                
+                if(todo_from_localStorage !== null){
+                    all_todos.push( JSON.parse(todo_from_localStorage) ) ;
+                }     
+            } 
+
+            all_todos.sort(function (a, b) {
+                return a.order - b.order;
+            });
+            
+            $('ul').html(''); 
+            // return all_todos;
+            if(all_todos.length > 0 ){
+                for (var i = 0; i < all_todos.length; i++) {                
+                    if(all_todos[i].done == false){
+                        var checkbox  =  '<input type = "checkbox" class = "c_box";   value =' + all_todos[i].id + '>' ; 
+                    }else{
+                        var checkbox  =  '<input type = "checkbox" class = "c_box";  value =' + all_todos[i].id + ' checked>' ;
+                    } 
+
+                    var button = '<input type = "button"; class = "deletetodo"; value = "Delete" data-attr = '+ all_todos[i].id +' >' ;        
+                    
+                    $('ul').append('<li>'+checkbox +'&nbsp;' + all_todos[i].title +'&nbsp;' + button +     '</li>' );
+                }                
+            } 
+        }
+         
+        // getTodos();
+
+        function getCount(){
+            let totaldata = [];
+            
+            for (var i = 0; i < localStorage.length; i++){
+                todo_from_localStorage = localStorage.getItem(localStorage.key(i));                
+                if(todo_from_localStorage !== null){
+                    totaldata.push( JSON.parse(todo_from_localStorage) ) ;
+                }     
+            } 
+
+            totaldata.sort(function (a, b) {
+                return a.order - b.order;
+            });
+
+            return totaldata;
+        }
+
+
+        var todo_item;
+        var title;
+        
+        // add todos
+        $('input[type=text]').keypress(function (event) {
+            if(event.keyCode == 13){              
+                title = $('input[type=text]').val();
+                if (title !== '') {
+                    var maxorder = Math.max.apply(Math,getCount().map(function(o){return o.order;}))
+                    if(maxorder == '-Infinity'){
+                        maxorder = 0;
+                    }
+                    unique_id = maxorder + 1;
+                    var random  = Math.random().toString(36).slice(2);
+                    todo_item_id = 'todo_id' + random ;
+                    todo_item  = {
+                        'title' : title,
+                        'id' : todo_item_id,
+                        'order' : unique_id,
+                        'done': false 
+                    }
+                    localStorage.setItem(todo_item_id,JSON.stringify(todo_item));
+                    window.location.reload();  
+                }
+            }
+        }); 
+
+        function checkUrl(){
+            var t = window.location.href + '';
+            var data  = t.split('?');
+            if(data[1] == 'completed'){
+                showCompleted();
+            }else if(data[1] == 'uncompleted'){
+                showUncompleted();
+            }else{
+                getTodos();
+            }
+        }
+
+        checkUrl();   
+
+        function showCompleted(){
+            $('ul').html('');
+                getCount().forEach(function (entry) {
+                   if(entry.done == true){
+                    var checkbox = '<input type = "checkbox"; class = "c_box"; value =' + entry.id + ' checked>' ;
+                    var button = '<input type = "button";   class = "deletetodo"; value = "Delete" data-attr = '+ entry.id  +'>' ;
+                    $('ul').append('<li>'+checkbox +'&nbsp;' + entry.title +'&nbsp;' + button +     '</li>' );
+                }
+            }); 
+        }
+
+        function showUncompleted() {
+            $('ul').html('');
+            getCount().forEach(function (entry) {
+               if(entry.done == false){                
+                var checkbox = '<input type = "checkbox" class = "c_box"; value =' + entry.id + '>' ; 
+                var button = '<input type = "button";  class = "deletetodo"; value = "Delete" data-attr = '+ entry.id  +'   >' ;  
+                $('ul').append('<li>'+checkbox +'&nbsp;' + entry.title +'&nbsp;' + button +     '</li>' );
+
+               }
+           }); 
+        }
+
+
+        $('#completed').click(function() {
+
+            var url = window.location.href + '';
+            var data  = url.split('?');
+            var changed = data[0] + '?completed';
+            window.location = changed;
+            showCompleted();
+
+        });
+
+        $('#uncompleted').click(function() {
+
+            var url = window.location.href + '';
+            var data  = url.split('?');
+            var changed = data[0] + '?uncompleted';
+            window.location = changed;
+            checkUrl();            
+            
+        });    
+
+        $('#all_todos_show').click(function() {            
+            var url = window.location.href + '';
+            var data  = url.split('?');
+            var changed = data[0];
+            window.location = changed;
+            checkUrl(); 
+        });   
+
+        
+        // update done or not 
+
+        $('ul').on('click','.c_box',function(){ 
+            var todo_id = $(this).val();
+            var task_tobe_updated = localStorage.getItem(todo_id);      
+            var obj_data = JSON.parse(task_tobe_updated);               
+            var checked = $(this).is(':checked');
+            if(checked){
+                obj_data.done = true;
+            }else{
+                obj_data.done = false; 
+            }
+
+            localStorage.setItem(todo_id,JSON.stringify(obj_data));            
+            checkUrl();            
+        });
+
+        // delete todo item 
+
+        $('ul').on('click','.deletetodo',function(){
+            var id = $(this).attr('data-attr');
+            localStorage.removeItem(id); 
+            checkUrl();            
+        
+            // getTodos
+        })
+    });
+    
+
+</script>
+
+
+
