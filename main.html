@@ -12,21 +12,20 @@
     <body>
 
         <nav class="navbar  navbar-dark fixed-top bg-dark">
-             <a class="navbar-brand" href="#">To Do App</a>
+             <a class="navbar-brand" href="http://localhost/todo_app/main.html">To Do App</a>
         </nav>
 
           <!-- Main jumbotron for a primary marketing message or call to action -->
         <div class="jumbotron">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-3 remainingcountcss ">
-                        <span class="remainingCountHere">Uncompleted : <b>5</b></span>
-
+                    <div class="col-lg-3 remainingcountcss ">                        
                     </div>
                     <div class="col-lg-6 ">                    
                         <input type="text" class="form-control"  placeholder="Let's add some to do's" autofocus />
                     </div>
-                    <div class="col-lg-3 ">
+                    <div class="col-lg-3 donecountcss  ">
+                       
                     </div>
                 </div><!-- /.row -->
             </div>
@@ -35,17 +34,14 @@
         <!-- <> -->
         <center>
             <ul class="list-group ulcss">
-                <li class="list-group-item ">
+                <!-- <li class="list-group-item ">
+                <div class="custom-control custom-checkbox">
+                  <input type="checkbox" class="custom-control-input" id="customCheck1">
+                  <label class="custom-control-label" for="customCheck1"></label>
+                </div>
 
-
-<div class="custom-control custom-checkbox">
-  <input type="checkbox" class="custom-control-input" id="customCheck1">
-  <label class="custom-control-label" for="customCheck1"></label>
-</div>
-
-
-                 <button class="destroy deletetodo"></button>   
-                 </li>
+                 <button class="destroy close deletetodo close" >&times;</button>   
+                 </li> -->
                <!--  <li class="list-group-item ">Second item</li>
                 <li class="list-group-item ">Third item</li>
                 <li class="list-group-item ">Third item</li>
@@ -62,6 +58,7 @@
             <!-- <a href="#" class="btn  btn-secondary w-100 all_todos_show">Clear completed</a> -->
             
         </div>
+
 
         </center>
          <footer class="container-fluid bg-dark custom_footer">
@@ -96,20 +93,14 @@
             // return all_todos;
             if(all_todos.length > 0 ){
                 for (var i = 0; i < all_todos.length; i++) {
-
                     if(all_todos[i].done == false){
-                        var checkbox  =  '<input type = "checkbox" class = "c_box custom-control-input "; id="customCheck'+i+' "   value =' + all_todos[i].id + '>' ; 
+                        var checkbox  =  '<input type = "checkbox" class = "custom-control-input c_box "id="customCheck'+i+'"   value =' + all_todos[i].id + '>' ; 
                     }else{
-                        var checkbox  =  '<input type = "checkbox" class = "c_box custom-control-input "; id="customCheck1'+i+'"  value =' + all_todos[i].id + ' checked>' ;
+                        var checkbox  = '<input type = "checkbox" class = " custom-control-input c_box" id="customCheck'+i+'"  value =' + all_todos[i].id + ' checked>' ;
                     }
-
-                    var checkbox_style = '<div class="custom-control custom-checkbox custom_margin" > '+ checkbox + '<label class="custom-control-label" for="customCheck'+i+'">'+ all_todos[i].title+' </label></div>';
-
-
-
-                    var button = '<button class="destroy deletetodo" data-attr = '+ all_todos[i].id +' ></button> ' ;        
-                    
-                    $('ul').append('<li class="list-group-item ">'+checkbox_style +'&nbsp;' + button +     '</li>' );
+                    var checkbox_style = '<div class="custom-control custom-checkbox custom_margin" >'+checkbox+'<label class="custom-control-label" for="customCheck'+i+'">'+all_todos[i].title+' </label></div>';
+                    var button = '<button class="destroy close deletetodo" data-attr = '+all_todos[i].id+' >&times; </button>';                    
+                    $('ul').append('<li class="list-group-item ">'+checkbox_style +'&nbsp;'+ button +'</li>' );
                 }                
             }else{
                 $('.btncss').hide();
@@ -136,32 +127,46 @@
         }
 
 
-        function getremainingCount(){
+        function getremainingCount(value){
             var allCount =  getCount();
-            // alert('asdf');
-            // console.log(allCount);
-            var notDoneTodos = 0; 
+
+            var notDoneTodos = 0;
+
+            if(value == 1){
+                notDoneTodos + 1;        
+            }       
+             
             allCount.forEach(function(entry){
                 if(entry.done == false){
                     notDoneTodos++;
                 }
             });
 
-            // return notDoneTodos; 
-            // alert('asdf');
-            $('.remainingCountHere b').html(notDoneTodos);
-
-
-
+            $('.remainingcountcss').html('<span class="remainingCountHere">Uncompleted : <b>'+notDoneTodos+'</b></span>');
         }
 
-        getremainingCount();
+        getremainingCount(value = 0);
+
+        function getdoneCount(){
+            var allCount =  getCount();           
+            var doneTodos = 0; 
+            allCount.forEach(function(entry){
+                if(entry.done == true){
+                    doneTodos++;
+                }
+            });
+
+            $('.donecountcss').html('<span class="donecounhere">Completed : <b>'+doneTodos+'</b></span>');
+        }
+
+        getdoneCount();
 
         var todo_item;
         var title;
         
         // add todos
         $('input[type=text]').keypress(function (event) {
+            // alert('sadf');
             if(event.keyCode == 13){              
                 title = $('input[type=text]').val();
                 if (title !== '') {
@@ -178,8 +183,21 @@
                         'order' : unique_id,
                         'done': false 
                     }
+
                     localStorage.setItem(todo_item_id,JSON.stringify(todo_item));
-                    window.location.reload();  
+
+                    var checkbox = '<input type = "checkbox" class = "custom-control-input c_box "id="customCheck"   value =' + todo_item_id + '>' ;
+                    var checkbox_style = '<div class="custom-control custom-checkbox custom_margin" >'+checkbox+'<label class="custom-control-label" for="customCheck">'+title+'</label></div>';
+                    var button = '<button class="destroy close deletetodo" data-attr = '+ todo_item_id +' >&times; </button>' ;
+                    $('ul').append('<li class="list-group-item ">'+checkbox_style +'&nbsp;'+ button +'</li>');
+                    $('.btncss').show();
+                    getremainingCount(value = 1);
+                    getTodos();
+                    // $('input[type=text]').val('');
+
+                    // window.location.reload();  
+                }else{
+                    alert('Enter todo');
                 }
             }
         }); 
@@ -187,11 +205,12 @@
         function checkUrl(){
             var t = window.location.href + '';
             var data  = t.split('?');
-            if(data[1] == 'completed'){
+            if(data[1] == 'completed#'){
                 showCompleted();
-            }else if(data[1] == 'uncompleted'){
+            }else if(data[1] == 'uncompleted#'){
                 showUncompleted();
             }else{
+                
                 getTodos();
             }
         }
@@ -200,53 +219,70 @@
 
         function showCompleted(){
             $('ul').html('');
+                var completed_id = 1;
                 getCount().forEach(function (entry) {
                    if(entry.done == true){
-                    var checkbox = '<input type = "checkbox"; class = "c_box custom-control-input "; id="customCheck1" value =' + entry.id + ' checked>' ;
-                    var button = '<button class="destroy deletetodo" data-attr = '+ entry.id +' ></button>' ;
-                    $('ul').append('<li class="list-group-item">'+checkbox +'&nbsp;' + entry.title +'&nbsp;' + button +     '</li>' );
+                    var checkbox = '<input type = "checkbox" class = "custom-control-input c_box "id="customCheck'+completed_id+'"   value =' + entry.id + ' checked>' ;
+                    var checkbox_style = '<div class="custom-control custom-checkbox custom_margin" >'+checkbox+'<label class="custom-control-label" for="customCheck'+completed_id+'">'+entry.title+' </label></div>';
+                    var button = '<button class="destroy close deletetodo" data-attr = '+ entry.id +' >&times; </button>' ;
+                    $('ul').append('<li class="list-group-item ">'+checkbox_style +'&nbsp;'+ button +'</li>');
+                    completed_id++;
                 }
             }); 
         }
 
         function showUncompleted() {
             $('ul').html('');
+            var uncompleted_id = 1;
             getCount().forEach(function (entry) {
-               if(entry.done == false){                
-                var checkbox = '<input type = "checkbox" class = "c_box custom-control-input "; id="customCheck1" value =' + entry.id + '>' ; 
-                var button = '<button class="destroy deletetodo" data-attr = '+ entry.id +' ></button>' ;
-                $('ul').append('<li class="list-group-item">'+checkbox +'&nbsp;' + entry.title +'&nbsp;' + button +  '</li>' );
-
-               }
+                if(entry.done == false){ 
+                    var checkbox = '<input type = "checkbox" class = "custom-control-input c_box "id="customCheck'+uncompleted_id+'"   value =' + entry.id + '>' ;
+                    var checkbox_style = '<div class="custom-control custom-checkbox custom_margin" >'+checkbox+'<label class="custom-control-label" for="customCheck'+uncompleted_id+'">'+entry.title+' </label></div>';
+                    var button = '<button class="destroy close deletetodo" data-attr = '+ entry.id +' >&times; </button>' ;
+                    $('ul').append('<li class="list-group-item ">'+checkbox_style +'&nbsp;'+ button +'</li>');
+                    uncompleted_id++;
+                }
            }); 
         }
 
 
         $('.completed').click(function() {
 
-            var url = window.location.href + '';
-            var data  = url.split('?');
-            var changed = data[0] + '?completed';
-            window.location = changed;
+            var href = '?completed';
+
+            window.history.pushState({href: href}, '', href);
+
+            // var url = window.location.href + '';
+            // var data  = url.split('?');
+            // var changed = data[0] + '?completed';
+            // window.location = changed;
             showCompleted();
 
         });
 
         $('.uncompleted').click(function() {
 
-            var url = window.location.href + '';
-            var data  = url.split('?');
-            var changed = data[0] + '?uncompleted';
-            window.location = changed;
-            checkUrl();            
+            var href = '?uncompleted';
+            window.history.pushState({href: href}, '', href);
+
+
+            // var url = window.location.href + '';
+            // var data  = url.split('?');
+            // var changed = data[0] + '?uncompleted';
+            // window.location = changed;
+            showUncompleted();            
             
         });    
 
         $('.all_todos_show').click(function() {            
             var url = window.location.href + '';
             var data  = url.split('?');
-            var changed = data[0];
-            window.location = changed;
+            var href = data[0];
+            // window.location = changed;
+
+            // var href = '?uncompleted';
+            window.history.pushState({href: href}, '', href);
+
             checkUrl(); 
         });   
 
@@ -266,7 +302,8 @@
 
             localStorage.setItem(todo_id,JSON.stringify(obj_data));            
             checkUrl();   
-             getremainingCount();
+            getremainingCount();
+            getdoneCount();
          
         });
 

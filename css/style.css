@@ -68,10 +68,6 @@ width:100%;
 }
 
 
-.destroy:after {
-    content: 'X';
-}
-
 .destroy{
 	/* display: none; */
        /* display: none; */
@@ -90,11 +86,11 @@ width:100%;
     border: none;
 }
     
-.destroy:hover{
+/*.destroy:hover{
 	background: grey;
 	border: 10px;
 }
-
+*/
 
 .remainingcountcss{
 	padding-top: 50px;
@@ -104,5 +100,17 @@ width:100%;
 
 .custom_margin{
 	margin-bottom: -22px;
+
+}
+
+.donecountcss{
+    padding-top: 50px;
+}
+
+
+.donecounhere{
+    margin-left: 118px;
+    
+    font-size: 20px;
 
 }

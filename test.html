@@ -10,7 +10,7 @@
 
 <div id="appendhre"></div>
 	
-
+	<button type="button" class="close" >&times;</button>
 </body>
 
 
@@ -26,6 +26,13 @@ var a = '<div class="custom-control custom-checkbox"><input type="checkbox" clas
 	$('#appendhre').append(a);
 
 }
+
+var href = '?cuompleted';
+
+window.history.pushState({href: href}, '', href);
+
+
+
 </script>
 
 
